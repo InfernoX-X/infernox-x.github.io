@@ -1,0 +1,139 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Data Entry Viewer</title>
+    <link rel="stylesheet" href="./style.css">
+</head>
+<body>
+
+    <div class="container">
+        <div class="left_container">
+            <textarea id="jsonTextarea" placeholder="Enter JSON here..." rows="10" cols="30">
+{
+    "imdb_id": "",
+    "name": "",
+    "year": "",
+    "bio": "",
+    "gender": "",
+    "is_pornstar": ""
+}
+            </textarea>
+        </div>
+        
+        <div class="right_container">
+            <div class="row">
+                <p>IMDB ID:</p>
+                <input type="text" id="imdb_id" placeholder="IMDB ID" required>
+            </div>
+            <div class="row">
+                <p>Name:</p>
+                <input type="text" id="name" placeholder="Name" required>
+            </div>
+            <div class="row">
+                <p>Year:</p>
+                <input type="text" id="year" placeholder="Year" required>
+            </div>
+            <div class="row">
+                <p>Bio:</p>
+                <input type="text" id="bio" placeholder="Bio" required>
+            </div>
+            <div class="row">
+                <p>Gender:</p>
+                <input type="text" id="gender" placeholder="Gender" required>
+            </div>
+            <div class="row">
+                <p>Is_Pornstar:</p>
+                <input type="text" id="is_pornstar" placeholder="Is Pornstar" required>
+            </div>
+
+            <div class="row"></div>
+                <button id="downloadBtn">Download JSON</button>
+            </div>
+
+        </div>
+    </div>
+
+    <script>
+        const textarea = document.getElementById("jsonTextarea");
+        const inputs = {
+            imdb_id: document.getElementById("imdb_id"),
+            name: document.getElementById("name"),
+            year: document.getElementById("year"),
+            bio: document.getElementById("bio"),
+            gender: document.getElementById("gender"),
+            is_pornstar: document.getElementById("is_pornstar")
+        };
+
+        // Convert object keys to lowercase for case-insensitive matching
+        function convertKeysToLowerCase(obj) {
+            const lowerCaseObj = {};
+            for (const key in obj) {
+                lowerCaseObj[key.toLowerCase()] = obj[key];
+            }
+            return lowerCaseObj;
+        }
+
+        // Function to update input fields from the JSON in the textarea
+        function updateInputsFromJson() {
+            try {
+                const data = JSON.parse(textarea.value);
+                const normalizedData = convertKeysToLowerCase(data); // Convert keys to lowercase
+
+                inputs.imdb_id.value = normalizedData.imdb_id || '';
+                inputs.name.value = normalizedData.name || '';
+                inputs.year.value = normalizedData.year || '';
+                inputs.bio.value = normalizedData.bio || '';
+                inputs.gender.value = normalizedData.gender || '';
+                inputs.is_pornstar.value = normalizedData.is_pornstar || '';
+            } catch (error) {
+                console.error('Invalid JSON', error);
+            }
+        }
+
+        // Function to update the JSON in the textarea based on input field values
+        function updateJsonFromInputs() {
+            const data = {
+                imdb_id: inputs.imdb_id.value,
+                name: inputs.name.value,
+                year: inputs.year.value,
+                bio: inputs.bio.value,
+                gender: inputs.gender.value,
+                is_pornstar: inputs.is_pornstar.value
+            };
+            textarea.value = JSON.stringify(data, null, 4); // Pretty print the JSON
+        }
+
+        // Initialize the input fields from the JSON in the textarea when the page loads
+        updateInputsFromJson();
+
+        // Update the input fields when the textarea changes
+        textarea.addEventListener('input', updateInputsFromJson);
+
+        // Update the textarea when any input field changes
+        Object.values(inputs).forEach(input => {
+            input.addEventListener('input', updateJsonFromInputs);
+        });
+
+        // Function to download the JSON as a file
+        function downloadJson() {
+            const jsonData = textarea.value; // Get the JSON from textarea
+            const nameValue = inputs.name.value.trim() || 'default'; // Get the name field value for the filename, or use 'default'
+            const blob = new Blob([jsonData], { type: "application/json" });
+            const url = URL.createObjectURL(blob);
+            const a = document.createElement('a');
+            a.href = url;
+            a.download = `${nameValue}.json`; // Set the filename to the name value
+            document.body.appendChild(a);
+            a.click();
+            document.body.removeChild(a);
+        }
+
+        // Download button click event
+        document.getElementById('downloadBtn').addEventListener('click', downloadJson);
+
+    </script>
+
+</body>
+</html>
