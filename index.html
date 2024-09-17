@@ -10,16 +10,14 @@
 
     <div class="container">
         <div class="left_container">
-            <textarea id="jsonTextarea" placeholder="Enter JSON here..." rows="10" cols="30">
-{
+            <textarea id="jsonTextarea" placeholder="Enter JSON here..." rows="10" cols="30">{
     "imdb_id": "",
     "name": "",
     "year": "",
     "bio": "",
     "gender": "",
     "is_pornstar": ""
-}
-            </textarea>
+}</textarea>
         </div>
         
         <div class="right_container">
@@ -92,13 +90,13 @@
             }
         }
 
-        // Function to update the JSON in the textarea based on input field values
         function updateJsonFromInputs() {
             const data = {
                 imdb_id: inputs.imdb_id.value,
                 name: inputs.name.value,
                 year: inputs.year.value,
-                bio: inputs.bio.value,
+                // Remove all double quotes from bio
+                bio: inputs.bio.value.replace(/"/g, ''), // Sanitizing bio to remove quotes
                 gender: inputs.gender.value,
                 is_pornstar: inputs.is_pornstar.value
             };
