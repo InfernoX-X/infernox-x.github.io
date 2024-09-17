@@ -96,7 +96,7 @@
                 name: inputs.name.value,
                 year: inputs.year.value,
                 // Remove all double quotes from bio
-                bio: inputs.bio.value.replace(/"/g, ''), // Sanitizing bio to remove quotes
+                bio: inputs.bio.value.replace(/"/g, "'"), // Sanitizing bio to remove quotes
                 gender: inputs.gender.value,
                 is_pornstar: inputs.is_pornstar.value
             };
