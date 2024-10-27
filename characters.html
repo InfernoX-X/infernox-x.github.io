@@ -1,0 +1,88 @@
+
+<!DOCTYPE html>
+<html>
+<head>
+  <title>Create Character</title>
+  <link rel="stylesheet" href="./css/create-character.css">
+</head>
+<body>
+
+<div id="formContainer" class="mainFormContainer">
+    <form id="characterForm">
+        <h3>IMDB ID</h3>
+        <input type="text" id="imdb_id" name="imdb_id" required>
+        <h3>Name</h3>
+        <input type="text" id="name" name="name" required>
+        <h3>Year</h3>
+        <input type="number" id="year" name="year" required>
+        <h3>Character Photo</h3>
+        <div class="picInput">
+            <div class="preview">
+                <img id="moviePreview" src="./img/no-pic.jpg" alt="">
+            </div>
+            <input type="file" id="photo" name="photo" accept="image/*" onchange="previewImage(event, 'moviePreview')">
+        </div>
+        <div class="buttons">
+            <button type="button" onclick="exportData()">Export</button>
+            <input type="file" id="importFile" accept=".json" style="display:none" onchange="importData(event)">
+            <button type="button" onclick="document.getElementById('importFile').click();">Import</button>
+        </div>
+    </form>
+</div>
+
+<script>
+function exportData() {
+    const characterData = {
+        imdb_id: document.getElementById('imdb_id').value,
+        name: document.getElementById('name').value,
+        year: document.getElementById('year').value,
+    };
+
+    const jsonString = JSON.stringify(characterData, null, 2);
+    const blob = new Blob([jsonString], { type: 'application/json' });
+    const url = URL.createObjectURL(blob);
+    const a = document.createElement('a');
+    a.href = url;
+    a.download = document.getElementById('name').value.toString() + '.json';
+    a.click();
+    URL.revokeObjectURL(url); // Clean up
+}
+
+function importData(event) {
+    const file = event.target.files[0];
+    const reader = new FileReader();
+
+    reader.onload = function(e) {
+        const data = JSON.parse(e.target.result);
+        document.getElementById('imdb_id').value = data.imdb_id;
+        document.getElementById('name').value = data.name;
+        document.getElementById('year').value = data.year;
+    };
+
+    if (file) {
+        reader.readAsText(file);
+    }
+}
+
+// Preview Image
+function previewImage(event, previewId) {
+    const preview = document.getElementById(previewId);
+    const file = event.target.files[0];
+    const reader = new FileReader();
+
+    reader.onload = function() {
+        preview.src = reader.result;
+        preview.style.display = 'block';
+    };
+
+    if (file) {
+        reader.readAsDataURL(file);
+    } else {
+        preview.src = '';
+        preview.style.display = 'none';
+    }
+}
+
+</script>
+</body>
+</html>
